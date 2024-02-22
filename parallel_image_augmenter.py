@@ -11,29 +11,31 @@ def augment_images(images, transformations):
     print(f'Start thread {thread_name} with {len(images)} images')
     transformed_images = []
     for image in images:
-        transformed_images.append(transformations[0](image=image)['image'])
-        transformed_images.append(transformations[1](image=image)['image'])
-        transformed_images.append(transformations[2](image=image)['image'])
-        transformed_images.append(transformations[3](image=image)['image'])
-        transformed_images.append(transformations[4](image=image)['image'])
-        transformed_images.append(transformations[5](image=image)['image'])
-        transformed_images.append(transformations[6](image=image)['image'])
-    index = 0
-    for image in transformed_images:
-        out_path = f'out_images/augmented_demo_kitty_{thread_name}_{index}.jpg'
-        cv2.imwrite(out_path, image)
-        index += 1
+        for transformation in transformations:
+            image_to_resize = transformation(image=image)['image']
+            image_resize = image_resized(image_to_resize)
+            transformed_images.append(image_resize)
+
     print(f'End thread {multiprocessing.current_process().name}')
+    return transformed_images
+
+def image_resized(image):
+    height, width = image.shape[:2]
+    if height <= 1536 or width <= 1536:
+        resized_image = A.resize(image, height=1536, width=1536)
+    resized_image = A.resize(image, height=int(height*0.4), width=int(width*0.4))
+    return resized_image
+
 
 if __name__ == '__main__':
 
     # Transform objects
     brightnessTransform = A.Compose([
-        A.RandomBrightnessContrast(brightness_limit=1, contrast_limit = 1, p=1.0),
+        A.RandomBrightnessContrast(brightness_limit=0.7, contrast_limit = 0.7, p=1.0),
     ])
 
     cropTransform = A.Compose([
-        A.RandomCrop(width=128, height=128, p=1.0),
+        A.RandomCrop(width=1536, height=1536, p=1.0),
     ])
 
     rotateTransform = A.Compose([
@@ -77,20 +79,20 @@ if __name__ == '__main__':
 
     # Augment images
     start_time = time.time()
-    pool.starmap(augment_images, args)
-    pool.close()
-    pool.join()
+    results = pool.starmap(augment_images, args)
     end_time = time.time()
     print(f'Time taken to augment {len(images)} images: {end_time - start_time} seconds')
+    pool.close()
+    pool.join()
 
     # Flatten the list of lists
-    # transformed_images = [image for sublist in results for image in sublist]
+    transformed_images = [image for sublist in results for image in sublist]
 
 
-    # print('Saving images...')
-    # index = 0
-    # for image in transformed_images:
-    #     out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-    #     cv2.imwrite(out_path, image)
-    #     index += 1
-    # print('Done!')
+    print('Saving images...')
+    index = 0
+    for image in transformed_images:
+        out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
+        cv2.imwrite(out_path, image)
+        index += 1
+    print('Done!')
