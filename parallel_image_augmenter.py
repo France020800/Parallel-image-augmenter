@@ -4,28 +4,8 @@ import cv2
 import time
 import albumentations as A
 import multiprocessing
+from functions.functions import augment_images
 from multiprocessing import Pool
-
-def augment_images(images, transformations):
-    thread_name = multiprocessing.current_process().name
-    print(f'Start thread {thread_name} with {len(images)} images')
-    transformed_images = []
-    for image in images:
-        for transformation in transformations:
-            image_to_resize = transformation(image=image)['image']
-            image_resize = image_resized(image_to_resize)
-            transformed_images.append(image_resize)
-
-    print(f'End thread {multiprocessing.current_process().name}')
-    return transformed_images
-
-def image_resized(image):
-    height, width = image.shape[:2]
-    if height <= 1536 or width <= 1536:
-        resized_image = A.resize(image, height=1536, width=1536)
-    resized_image = A.resize(image, height=int(height*0.4), width=int(width*0.4))
-    return resized_image
-
 
 if __name__ == '__main__':
 
@@ -40,6 +20,7 @@ if __name__ == '__main__':
 
     rotateTransform = A.Compose([
         A.Rotate(limit=45, p=1.0),
+        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6),
     ])
 
     colorTransform = A.Compose([
@@ -48,14 +29,11 @@ if __name__ == '__main__':
 
     horizontalFlipTransform = A.Compose([
         A.HorizontalFlip(p=1.0),
+        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6),
     ])
 
     verticalFlipTransform = A.Compose([
         A.VerticalFlip(p=1.0),
-    ])
-
-    complexTransform = A.Compose([
-        A.Rotate(limit=180, p=1.0),
         A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6),
     ])
 
@@ -70,29 +48,31 @@ if __name__ == '__main__':
     else:
         pool_size = multiprocessing.cpu_count()
     pool = Pool(processes=pool_size)
-    print('Using {} processes'.format(pool_size))
+    # print('Using {} processes'.format(pool_size))
 
     # Split images into batches
     batch_size = round(len(images) // pool_size)
     image_batches = [images[i:i+batch_size] for i in range(0, len(images), batch_size)]
-    args = [(batch, [brightnessTransform, cropTransform, rotateTransform, colorTransform, horizontalFlipTransform, verticalFlipTransform, complexTransform]) for batch in image_batches]
+    args = [(batch, [brightnessTransform, cropTransform, rotateTransform, colorTransform, horizontalFlipTransform, verticalFlipTransform]) for batch in image_batches]
 
     # Augment images
+    # print('Augmenting images...')
     start_time = time.time()
     results = pool.starmap(augment_images, args)
-    end_time = time.time()
-    print(f'Time taken to augment {len(images)} images: {end_time - start_time} seconds')
     pool.close()
     pool.join()
+    end_time = time.time()
+    # print(f'Time taken to augment {len(images)} images: {end_time - start_time} seconds')
 
     # Flatten the list of lists
     transformed_images = [image for sublist in results for image in sublist]
 
 
-    print('Saving images...')
+    # print('Saving images...')
     index = 0
     for image in transformed_images:
         out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
         cv2.imwrite(out_path, image)
         index += 1
     print('Done!')
+    print(f'{round(end_time - start_time, 4)}')
