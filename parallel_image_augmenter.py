@@ -15,7 +15,7 @@ if __name__ == '__main__':
         A.VerticalFlip(p=0.5),
         A.HorizontalFlip(p=0.5),
         A.RandomBrightnessContrast(brightness_limit=0.7, contrast_limit = 0.7, p=0.5),
-        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6),
+        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=0.5),
         A.RandomCrop(width=1536, height=1536, p=0.2)
     ])
 
