@@ -1,9 +1,13 @@
 import albumentations as A
+import threading
+import time
 
-def augment_images(images, transformations):
+def augment_images(images, transformation):
     transformed_images = []
+    print(f'Start thread {threading.current_thread().ident}')
     for image in images:
-        for transformation in transformations:
+        for i in range(10):
+            time.sleep(1)
             image_to_resize = transformation(image=image)['image']
             resized_image = _image_resized(image_to_resize)
             transformed_images.append(resized_image)
@@ -12,6 +16,7 @@ def augment_images(images, transformations):
 
 def augment_image(image, transformations):
     transformed_images = []
+    print(f'Start thread {threading.current_thread().ident}')
     for transformation in transformations:
         image_to_resize = transformation(image=image)['image']
         resized_image = _image_resized(image_to_resize)
