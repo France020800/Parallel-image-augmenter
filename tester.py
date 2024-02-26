@@ -13,12 +13,12 @@ def run_parallel(num_thread):
 
 if __name__ == '__main__':
     times = []
-    for i in range(1, 10):
+    for i in range(1, 17):
         time = run_parallel(i)
         times.append(time)
         print(f'Time for {i} threads: {time}')
 
-    plt.plot(range(1, 10), times, marker='o')
+    plt.plot(range(1, 17), times, marker='o')
     plt.xlabel('Number of threads')
     plt.ylabel('Time')
     plt.show()
