@@ -19,6 +19,18 @@ if __name__ == '__main__':
         A.RandomCrop(width=1536, height=1536, p=0.2)
     ])
 
+    RGB_shift = A.RGBShift(r_shift_limit=20, g_shift_limit=20, b_shift_limit=20, p=1.0)
+    saturation_transformation = A.HueSaturationValue(p=1.0)
+    channel_shuffle = A.ChannelShuffle(p=1.0)
+    random_gamma = A.RandomGamma(p=1.0)
+    random_brightness = A.RandomBrightnessContrast(p=1.0)
+    blur = A.Blur(p=1.0)
+    gray_transformation = A.ToGray(p=1.0)
+    random_rotate = A.Rotate(limit=360, p=1.0)
+    vertical_flip = A.VerticalFlip(p=1.0)
+    horizontal_flip = A.HorizontalFlip(p=1.0)
+
+
     # Load images
     folder_path = 'in_images/'
     image_list = os.listdir(folder_path)
@@ -46,11 +58,11 @@ if __name__ == '__main__':
     # Flatten the list of lists
     # transformed_images = [image for sublist in results for image in sublist]
 
-    # print(f'Length of transformed images: {len(transformed_images[0])}')
-    # print('Saving images...')
-    # index = 0
-    # for image in transformed_images:
-    #     out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-    #     cv2.imwrite(out_path, image)
-    #     index += 1
+    image_to_save = [image for sublist in transformed_images for image in sublist]
+    print('Saving images...')
+    index = 0
+    for image in image_to_save:
+        out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
+        cv2.imwrite(out_path, image)
+        index += 1
     print('Done!')
