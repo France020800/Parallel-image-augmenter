@@ -35,12 +35,12 @@ print('Augmenting images...')
 transformed_images = augment_images(images, transformations)
 
 # print('Saving images...')
-index = 0
-for image in transformed_images:
-    out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-    cv2.imwrite(out_path, image)
-    index += 1
     
+image_names = next(os.walk('in_images'))[2]
+for i, name in enumerate(image_names):
+        for j, image in enumerate(transformed_images[i * 10: (i+1) * 10]):
+            out_path = f'out_images/augmented_{j}_{name}'
+            cv2.imwrite(out_path, image)
 end_time = time.time() 
 print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
 print('Done!')
