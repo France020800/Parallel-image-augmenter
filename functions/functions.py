@@ -1,13 +1,17 @@
 import albumentations as A
+import os
+import cv2
 import threading
 import time
 
-def augment_images(images, transformation):
+from asyncio import gather, create_task
+
+def augment_images(images, transformations):
     transformed_images = []
-    print(f'Start thread {threading.current_thread().ident}')
+    # print(f'Start thread {threading.current_thread().ident}')
     for image in images:
-        for i in range(10):
-            time.sleep(1)
+        for transformation in transformations:
+            # time.sleep(1)
             image_to_resize = transformation(image=image)['image']
             resized_image = _image_resized(image_to_resize)
             transformed_images.append(resized_image)
@@ -16,13 +20,30 @@ def augment_images(images, transformation):
 
 def augment_image(image, transformations):
     transformed_images = []
-    print(f'Start thread {threading.current_thread().ident}')
+    # print(f'Start thread {threading.current_thread().ident}')
     for transformation in transformations:
         image_to_resize = transformation(image=image)['image']
         resized_image = _image_resized(image_to_resize)
         transformed_images.append(resized_image)
 
     return transformed_images
+
+def parallel_augment_image(image_to_read, transformations):
+    images = _parallel_read(image_to_read)
+    transformed_images = augment_images(images, transformations)
+    index = 0
+    for image in transformed_images:
+        out_path = f'out_images/augmented_{image_to_read[index]}'
+        cv2.imwrite(out_path, image)
+        index += 1
+
+def sequential_read(folder_path):
+    image_list = os.listdir(folder_path)
+    return [cv2.imread(folder_path + image) for image in image_list]
+
+def _parallel_read(image_to_read):
+    images = [cv2.imread(f'in_images/{image}') for image in image_to_read]
+    return images
 
 
 def _image_resized(image):

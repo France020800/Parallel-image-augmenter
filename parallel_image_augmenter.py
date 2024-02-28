@@ -4,7 +4,7 @@ import cv2
 import time
 import multiprocessing
 import albumentations as A
-from functions.functions import augment_images
+from functions.functions import parallel_augment_image
 from joblib import Parallel, delayed
 
 if __name__ == '__main__':
@@ -30,11 +30,9 @@ if __name__ == '__main__':
     vertical_flip = A.VerticalFlip(p=1.0)
     horizontal_flip = A.HorizontalFlip(p=1.0)
 
-
-    # Load images
-    folder_path = 'in_images/'
-    image_list = os.listdir(folder_path)
-    images = [cv2.imread(folder_path + image) for image in image_list]
+    # Get the images number
+    images = next(os.walk('in_images'))[2]
+    num_images = len(images)
 
     # Create a pool of workers 
     if len(sys.argv) > 1:
@@ -45,12 +43,11 @@ if __name__ == '__main__':
     
     
     # Split images into batches
-    batch_size = round(len(images) // num_thread)
-    image_batches = [images[i:i+batch_size] for i in range(0, len(images), batch_size)]
-
-    # Split images into batches
+    transformations = [RGB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
+    batch_size = round(num_images // num_thread)
+    range(0, num_images, batch_size)
     start_time = time.time()
-    transformed_images = Parallel(n_jobs=num_thread)(delayed(augment_images)(batch, transformation) for batch in image_batches)
+    Parallel(n_jobs=num_thread)(delayed(parallel_augment_image) (transformations))
     end_time = time.time()
     print(f'{round(end_time - start_time, 4)}')
     # print(f'Time taken to augment {len(images)} images: {end_time - start_time} seconds')
@@ -58,11 +55,11 @@ if __name__ == '__main__':
     # Flatten the list of lists
     # transformed_images = [image for sublist in results for image in sublist]
 
-    image_to_save = [image for sublist in transformed_images for image in sublist]
-    print('Saving images...')
-    index = 0
-    for image in image_to_save:
-        out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-        cv2.imwrite(out_path, image)
-        index += 1
+    # image_to_save = [image for sublist in transformed_images for image in sublist]
+    # print('Saving images...')
+    # index = 0
+    # for image in image_to_save:
+    #     out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
+    #     cv2.imwrite(out_path, image)
+    #     index += 1
     print('Done!')

@@ -2,12 +2,7 @@ import os
 import cv2
 import time
 import albumentations as A
-from functions.functions import augment_images
-
-# Load images
-folder_path = 'in_images/'
-image_list = os.listdir(folder_path)
-images = [cv2.imread(folder_path + image) for image in image_list]
+from functions.functions import augment_images, sequential_read
 
 # Transform objects
 transformation = A.Compose([
@@ -29,11 +24,15 @@ gray_transformation = A.ToGray(p=1.0)
 random_rotate = A.Rotate(limit=360, p=1.0)
 vertical_flip = A.VerticalFlip(p=1.0)
 horizontal_flip = A.HorizontalFlip(p=1.0)
+transformations = [GB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
 
+start_time = time.time()
+print('Loading images...')
+folder_path = 'in_images/'
+images = sequential_read(folder_path)
 
 print('Augmenting images...')
-start_time = time.time()
-transformed_images = augment_images(images, transformation)
+transformed_images = augment_images(images, transformations)
 end_time = time.time() 
 print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
 
