@@ -1,0 +1,27 @@
+Time for 1 threads: 262.2526
+Time for 2 threads: 138.8295
+Time for 3 threads: 95.6382
+Time for 4 threads: 74.649
+Time for 5 threads: 94.2024
+Time for 6 threads: 54.3497
+Time for 7 threads: 53.7196
+Time for 8 threads: 47.2229
+Time for 9 threads: 52.5412
+Time for 10 threads: 56.1992
+Time for 11 threads: 58.4755
+Time for 12 threads: 46.0087
+Time for 13 threads: 47.2489
+Time for 14 threads: 47.5743
+Time for 15 threads: 46.2278
+Time for 16 threads: 47.1508
+
+Speedups:
+1: 1.0
+2: 1.8890264677175959
+3: 2.7421323278773544
+4: 3.513142841833112
+5: 2.783926948782621
+6: 4.82528146429511
+7: 4.881879239607144
+8: 5.5535047614610695
+9: 4.991370581562658
