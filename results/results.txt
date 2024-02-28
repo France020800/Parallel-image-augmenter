@@ -18,3 +18,14 @@ time = 48.8595
 time = 50.1209
 
 speedups = [1, 1.153323111495708, 1.3838377901851309, None, 1.4449374432824054, 1.5192601354984407, 1.5434356837241823, 1.5903109937678448, 1.550287405054578]
+
+
+manual test: 32 images
+sequential_time = 61.8057
+parallel_time = 35.4019     // 8 processes
+speedup = 1.7458
+
+manual test: 40 images
+sequential_time = 94.9733
+parallel_time = 49.6407     // 8 processes
+speedup = 1.9132

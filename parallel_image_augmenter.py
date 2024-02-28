@@ -30,7 +30,8 @@ if __name__ == '__main__':
     vertical_flip = A.VerticalFlip(p=1.0)
     horizontal_flip = A.HorizontalFlip(p=1.0)
     transformations = [RGB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
-
+    # transformations = [transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation]
+    
     # Get the images number
     images = next(os.walk('in_images'))[2]
     num_images = len(images)
@@ -40,7 +41,7 @@ if __name__ == '__main__':
         num_thread = int(sys.argv[1])
     else:
         num_thread = multiprocessing.cpu_count()
-    print('Using {} processes'.format(num_thread))
+    # print('Using {} processes'.format(num_thread))
     
     
     # Split images into batches
@@ -52,16 +53,4 @@ if __name__ == '__main__':
     Parallel(n_jobs=num_thread)(delayed(parallel_augment_image) (image, transformations) for image in image_batches)
     end_time = time.time()
     print(f'{round(end_time - start_time, 4)}')
-    # print(f'Time taken to augment {len(images)} images: {end_time - start_time} seconds')
-
-    # Flatten the list of lists
-    # transformed_images = [image for sublist in results for image in sublist]
-
-    # image_to_save = [image for sublist in transformed_images for image in sublist]
-    # print('Saving images...')
-    # index = 0
-    # for image in image_to_save:
-    #     out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-    #     cv2.imwrite(out_path, image)
-    #     index += 1
-    print('Done!')
+    # print('Done!')

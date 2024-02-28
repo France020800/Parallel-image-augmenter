@@ -25,13 +25,14 @@ random_rotate = A.Rotate(limit=360, p=1.0)
 vertical_flip = A.VerticalFlip(p=1.0)
 horizontal_flip = A.HorizontalFlip(p=1.0)
 transformations = [GB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
+# transformations = [transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation]
 
 start_time = time.time()
-print('Loading images...')
+# print('Loading images...')
 folder_path = 'in_images/'
 images = sequential_read(folder_path)
 
-print('Augmenting images...')
+# print('Augmenting images...')
 transformed_images = augment_images(images, transformations)
 
 # print('Saving images...')
@@ -42,6 +43,7 @@ for i, name in enumerate(image_names):
             out_path = f'out_images/augmented_{j}_{name}'
             cv2.imwrite(out_path, image)
 end_time = time.time() 
-print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
-print('Done!')
+print(f'{round(end_time - start_time, 4)}')
+# print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
+# print('Done!')
 

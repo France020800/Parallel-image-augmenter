@@ -1,8 +1,6 @@
 import albumentations as A
 import os
 import cv2
-import threading
-import time
 
 from asyncio import gather, create_task
 
@@ -49,7 +47,7 @@ def _parallel_read(image_to_read):
 def _image_resized(image):
     height, width = image.shape[:2]
     if height > 1536 or width > 1536:
-        resized_image = A.resize(image, height=int(height*0.4), width=int(width*0.4))
+        resized_image = A.resize(image, height=int(height*0.6), width=int(width*0.6))
     else:
         resized_image = image
     return resized_image
