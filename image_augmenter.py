@@ -4,6 +4,7 @@ import time
 import albumentations as A
 from functions.functions import augment_images
 
+start_time = time.time()
 # Load images
 folder_path = 'in_images/'
 image_list = os.listdir(folder_path)
@@ -29,19 +30,19 @@ gray_transformation = A.ToGray(p=1.0)
 random_rotate = A.Rotate(limit=360, p=1.0)
 vertical_flip = A.VerticalFlip(p=1.0)
 horizontal_flip = A.HorizontalFlip(p=1.0)
+transformations = [GB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
 
 
 print('Augmenting images...')
-start_time = time.time()
-transformed_images = augment_images(images, transformation)
-end_time = time.time() 
-print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
+transformed_images = augment_images(images, transformations)
 
-# print('Saving images...')
-# index = 0
-# for image in transformed_images:
-#     out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-#     cv2.imwrite(out_path, image)
-#     index += 1
+print('Saving images...')
+index = 0
+for image in transformed_images:
+    out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
+    cv2.imwrite(out_path, image)
+    index += 1
 print('Done!')
 
+end_time = time.time() 
+print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
