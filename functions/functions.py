@@ -32,14 +32,16 @@ def parallel_augment_image(image_to_read, transformations):
     images = _parallel_read(image_to_read)
     transformed_images = augment_images(images, transformations)
     index = 0
-    for image in transformed_images:
-        out_path = f'out_images/augmented_{image_to_read[index]}'
-        cv2.imwrite(out_path, image)
-        index += 1
+    for i, name in enumerate(image_to_read):
+        for j, image in enumerate(transformed_images[i * 10: (i+1) * 10]):
+            out_path = f'out_images/augmented_{j}_{name}'
+            cv2.imwrite(out_path, image)
+            index += 1
+    return None
 
 def sequential_read(folder_path):
     image_list = os.listdir(folder_path)
-    return [cv2.imread(folder_path + image) for image in image_list]
+    return [cv2.imread(folder_path + image) for image in image_list]    
 
 def _parallel_read(image_to_read):
     images = [cv2.imread(f'in_images/{image}') for image in image_to_read]

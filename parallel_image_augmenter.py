@@ -29,6 +29,7 @@ if __name__ == '__main__':
     random_rotate = A.Rotate(limit=360, p=1.0)
     vertical_flip = A.VerticalFlip(p=1.0)
     horizontal_flip = A.HorizontalFlip(p=1.0)
+    transformations = [RGB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
 
     # Get the images number
     images = next(os.walk('in_images'))[2]
@@ -43,11 +44,12 @@ if __name__ == '__main__':
     
     
     # Split images into batches
-    transformations = [RGB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
     batch_size = round(num_images // num_thread)
+    image_batches = [images[i:i+batch_size] for i in range(0, num_images, batch_size)]
+
     range(0, num_images, batch_size)
     start_time = time.time()
-    Parallel(n_jobs=num_thread)(delayed(parallel_augment_image) (transformations))
+    Parallel(n_jobs=num_thread)(delayed(parallel_augment_image) (image, transformations) for image in image_batches)
     end_time = time.time()
     print(f'{round(end_time - start_time, 4)}')
     # print(f'Time taken to augment {len(images)} images: {end_time - start_time} seconds')

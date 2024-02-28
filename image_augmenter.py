@@ -33,14 +33,15 @@ images = sequential_read(folder_path)
 
 print('Augmenting images...')
 transformed_images = augment_images(images, transformations)
-end_time = time.time() 
-print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
 
 # print('Saving images...')
-# index = 0
-# for image in transformed_images:
-#     out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-#     cv2.imwrite(out_path, image)
-#     index += 1
+index = 0
+for image in transformed_images:
+    out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
+    cv2.imwrite(out_path, image)
+    index += 1
+    
+end_time = time.time() 
+print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
 print('Done!')
 
