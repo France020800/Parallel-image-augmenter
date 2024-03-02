@@ -9,33 +9,82 @@ from joblib import Parallel, delayed
 
 if __name__ == '__main__':
 
-    # Transform objects
-    transformation = A.Compose([
-        A.Rotate(limit=360, p=1.0),
-        A.VerticalFlip(p=0.5),
-        A.HorizontalFlip(p=0.5),
-        A.RandomBrightnessContrast(brightness_limit=0.7, contrast_limit = 0.7, p=0.5),
-        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=0.5),
-        A.RandomCrop(width=1536, height=1536, p=0.2)
-    ])
-
-    # TODO - Add more transformations
     # TODO - Design correct but is required more work for the processes.
     # TODO - Rename the variables: images, image_batches. They are't images but paths.
 
-    RGB_shift = A.RGBShift(r_shift_limit=20, g_shift_limit=20, b_shift_limit=20, p=1.0)
-    saturation_transformation = A.HueSaturationValue(p=1.0)
-    channel_shuffle = A.ChannelShuffle(p=1.0)
-    random_gamma = A.RandomGamma(p=1.0)
-    random_brightness = A.RandomBrightnessContrast(p=1.0)
-    blur = A.Blur(p=1.0)
-    gray_transformation = A.ToGray(p=1.0)
-    random_rotate = A.Rotate(limit=360, p=1.0)
-    vertical_flip = A.VerticalFlip(p=1.0)
-    horizontal_flip = A.HorizontalFlip(p=1.0)
-    transformations = [RGB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
-    # transformations = [transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation,transformation]
-    
+    flipAndColorJittering = A.Compose([
+        A.HorizontalFlip(p=1.0),
+        A.VerticalFlip(p=1.0),
+        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+    ])
+
+    rotateAndColorJittering = A.Compose([
+        A.Rotate(limit=360, p=1.0),
+        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+    ])
+
+    flipAndBlur = A.Compose([
+        A.HorizontalFlip(p=1.0),
+        A.VerticalFlip(p=1.0),
+        A.AdvancedBlur(p=1.0),
+    ])
+
+    rotateAndBlur = A.Compose([
+        A.Rotate(limit=360, p=1.0),
+        A.AdvancedBlur(p=1.0),
+    ])
+
+    flipAndGray = A.Compose([
+        A.HorizontalFlip(p=1.0),
+        A.VerticalFlip(p=1.0),
+        A.ToGray(p=1.0),
+    ])
+
+    rotateAndGray = A.Compose([
+        A.Rotate(limit=360, p=1.0),
+        A.ToGray(p=1.0),
+    ])
+
+    flipAndChannelShuffle = A.Compose([
+        A.HorizontalFlip(p=1.0),
+        A.VerticalFlip(p=1.0),
+        A.ChannelShuffle(p=1.0),
+    ])
+
+    rotateAndChannelShuffle = A.Compose([
+        A.Rotate(limit=360, p=1.0),
+        A.ChannelShuffle(p=1.0),
+    ])
+
+    flipAndContrast = A.Compose([
+        A.HorizontalFlip(p=1.0),
+        A.VerticalFlip(p=1.0),
+        A.RandomBrightnessContrast(p=1.0),
+    ])
+
+    rotateAndContrast = A.Compose([
+        A.Rotate(limit=360, p=1.0),
+        A.RandomBrightnessContrast(p=1.0),
+    ])
+
+    flipAndPixelDropout = A.Compose([
+        A.HorizontalFlip(p=1.0),
+        A.VerticalFlip(p=1.0),
+        A.PixelDropout(dropout_prob=0.1, p=1.0),
+    ])
+
+    rotateAndPixelDropout = A.Compose([
+        A.Rotate(limit=360, p=1.0),
+        A.PixelDropout(dropout_prob=0.1, p=1.0),
+    ])
+
+    pixelDropOutAndColorJittering = A.Compose([
+        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+        A.PixelDropout(dropout_prob=0.1, p=1.0),
+    ])
+
+    transformations= [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering]
+
     # Get the images number
     images = next(os.walk('in_images'))[2]
     num_images = len(images)
