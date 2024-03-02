@@ -19,6 +19,10 @@ if __name__ == '__main__':
         A.RandomCrop(width=1536, height=1536, p=0.2)
     ])
 
+    # TODO - Add more transformations
+    # TODO - Design correct but is required more work for the processes.
+    # TODO - Rename the variables: images, image_batches. They are't images but paths.
+
     RGB_shift = A.RGBShift(r_shift_limit=20, g_shift_limit=20, b_shift_limit=20, p=1.0)
     saturation_transformation = A.HueSaturationValue(p=1.0)
     channel_shuffle = A.ChannelShuffle(p=1.0)
