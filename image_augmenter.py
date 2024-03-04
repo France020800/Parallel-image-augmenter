@@ -73,9 +73,19 @@ rotateAndPixelDropout = A.Compose([
 
 pixelDropOutAndColorJittering = A.Compose([
     A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
-    A.PixelDropout(dropout_prob=0.1, p=1.0),
+    A.PixelDropout(dropout_prob=0.3, p=1.0),
 ])
-transformations = [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering]
+
+pixelDropOutAndGray = A.Compose([
+    A.PixelDropout(dropout_prob=0.3, p=1.0),
+    A.ToGray(p=1.0),
+])
+
+pixelDropOutAndBlur = A.Compose([
+    A.PixelDropout(dropout_prob=0.3, p=1.0),
+    A.AdvancedBlur(p=1.0),
+])
+transformations = [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering, pixelDropOutAndGray, pixelDropOutAndBlur]
 
 start_time = time.time()
 # print('Loading images...')
@@ -83,7 +93,9 @@ folder_path = 'in_images/'
 images = sequential_read(folder_path)
 
 # print('Augmenting images...')
+start_augmentation = time.time()
 transformed_images = augment_images(images, transformations)
+print(f'end augmentation: {round(time.time() - start_augmentation, 4)}')
 
 # print('Saving images...')
     

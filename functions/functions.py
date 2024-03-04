@@ -2,10 +2,9 @@ import albumentations as A
 import os
 import cv2
 
-from asyncio import gather, create_task
-
 def augment_images(images, transformations):
     transformed_images = []
+    # length = len(images)*13
     # print(f'Start thread {threading.current_thread().ident}')
     for image in images:
         for transformation in transformations:
@@ -13,6 +12,8 @@ def augment_images(images, transformations):
             image_to_resize = transformation(image=image)['image']
             resized_image = _image_resized(image_to_resize)
             transformed_images.append(resized_image)
+        # progress = round(len(transformed_images)/length, 2)
+        # print(f'Progress: {progress*100}%')
 
     return transformed_images
 
