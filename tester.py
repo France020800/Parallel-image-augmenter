@@ -24,7 +24,7 @@ def run_sequential():
 if __name__ == '__main__':
     print('Start tester')
     times = []
-    time = run_sequential()
+    time = run_parallel(1)
     times.append(time)
     print(f'Sequential time: {time}')
     for i in range(2, 10):

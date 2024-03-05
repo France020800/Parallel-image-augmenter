@@ -1,15 +1,18 @@
 import albumentations as A
 import os
 import cv2
+import time
 
 def augment_images(images, transformations):
     transformed_images = []
-    # length = len(images)*13
+    # length = len(images)*len(transformations)
     # print(f'Start thread {threading.current_thread().ident}')
     for image in images:
         for transformation in transformations:
-            # time.sleep(1)
+            # time.sleep(0.5)
             image_to_resize = transformation(image=image)['image']
+            image_to_resize = transformation(image=image_to_resize)['image']
+            image_to_resize = transformation(image=image_to_resize)['image']
             resized_image = _image_resized(image_to_resize)
             transformed_images.append(resized_image)
         # progress = round(len(transformed_images)/length, 2)
