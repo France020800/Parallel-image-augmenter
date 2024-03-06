@@ -76,36 +76,31 @@ pixelDropOutAndColorJittering = A.Compose([
     A.PixelDropout(dropout_prob=0.3, p=1.0),
 ])
 
-# pixelDropOutAndGray = A.Compose([
-#     A.PixelDropout(dropout_prob=0.3, p=1.0),
-#     A.ToGray(p=1.0),
-# ])
+huge_transformation = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.Rotate(limit=360, p=1.0),
+    A.AdvancedBlur(p=1.0),
+    A.ToGray(p=1.0),
+    A.ChannelShuffle(p=1.0),
+    A.RandomBrightnessContrast(p=1.0),
+    A.PixelDropout(dropout_prob=0.1, p=1.0),
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+])
 
-# pixelDropOutAndBlur = A.Compose([
-#     A.PixelDropout(dropout_prob=0.3, p=1.0),
-#     A.AdvancedBlur(p=1.0),
-# ])
-transformations = [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering]
+transformations = [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering, huge_transformation]
 
 start_time = time.time()
-# print('Loading images...')
 folder_path = 'in_images/'
 images = sequential_read(folder_path)
 
-# print('Augmenting images...')
-# start_augmentation = time.time()
 transformed_images = augment_images(images, transformations)
-# print(f'end augmentation: {round(time.time() - start_augmentation, 4)}')
-
-# print('Saving images...')
     
 image_names = next(os.walk('in_images'))[2]
+size = len(transformations)
 for i, name in enumerate(image_names):
-        for j, image in enumerate(transformed_images[i * 10: (i+1) * 10]):
+        for j, image in enumerate(transformed_images[i * size: (i+1) * size]):
             out_path = f'out_images/augmented_{j}_{name}'
             cv2.imwrite(out_path, image)
 end_time = time.time() 
 print(f'{round(end_time - start_time, 4)}')
-# print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
-# print('Done!')
-

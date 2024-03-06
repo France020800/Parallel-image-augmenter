@@ -16,8 +16,9 @@ def augment_images(images, transformations):
 def parallel_augment_image(image_to_read, transformations):
     images = _parallel_read(image_to_read)
     transformed_images = augment_images(images, transformations)
+    size = len(transformations)
     for i, name in enumerate(image_to_read):
-        for j, image in enumerate(transformed_images[i * 10: (i+1) * 10]):
+        for j, image in enumerate(transformed_images[i * size: (i+1) * size]):
             out_path = f'out_images/augmented_{j}_{name}'
             cv2.imwrite(out_path, image)
     return None
