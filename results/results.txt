@@ -29,3 +29,108 @@ manual test: 40 images
 sequential_time = 94.9733
 parallel_time = 49.6407     // 8 processes
 speedup = 1.9132
+
+manual test: 40 images, 13 compose transformation
+sequential_time = 232.138
+parallel_time = 95.1623     // 8 processes
+speedup = 2.4394
+
+manual test: 40 images, 13 compose transformations
+sequential_time = 292.9973
+parallel_time = 197.0038
+speedup = 1.49
+
+manual test: 32 images, 13 compose transformations
+sequential_time = 106.9831 (255.6482)
+parallel_time = 181.3654 (148.5006)
+speedup = 1.70 (1.72)
+
+manual test: 40 images, 13 compose trasformations x3 (sleep 1s)
+sequential_time = 480.193
+parallel_time = 151.9823
+speedup = 3.160
+
+TEST WITH 15 TRANSFORMATIONS AND 40 IMAGES
+Sequential time: 232.138	// Review
+Time for 2 threads: 146.4246
+Time for 3 threads: 128.8671
+Time for 4 threads: 126.9801
+Time for 5 threads: 121.6626
+Time for 6 threads: 125.3075
+Time for 7 threads: 124.5253
+Time for 8 threads: 118.9885
+Time for 9 threads: 131.259
+speedups = [1.0, 1.5853756814087252, 1.8013752152411284, 1.828144725039593, 1.9080473374726499, 1.8525467350318217, 1.8641834229670597, 1.9509280308601251, 1.7685492042450424]
+
+
+# Testing transformations speed
+
+flipAndColorJittering = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+])
+speed = 0.27s
+
+rotateAndColorJittering = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+])
+0.3448s
+
+flipAndBlur = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.Blur(p=1.0),
+])
+0.0901s
+
+rotateAndBlur = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.Blur(p=1.0),
+])
+0.1806s
+
+flipAndGray = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.ToGray(p=1.0),
+])
+0.0664s
+
+rotateAndGray = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.ToGray(p=1.0),
+])
+0.1483s
+
+
+flipAndChannelShuffle = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.ChannelShuffle(p=1.0),
+])
+0.2687s
+
+rotateAndChannelShuffle = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.ChannelShuffle(p=1.0),
+])
+0.3183s
+
+
+Maybe the final tests??
+sequential_time = 585.6772
+parallel_time = 287.2413
+speedup = 2.04
+
+Sequential time: 437.6598
+Time for 2 threads: 319.207
+Time for 3 threads: 265.3475
+Time for 4 threads: 251.5712
+Time for 5 threads: 233.8762
+Time for 6 threads: 231.7184
+Time for 7 threads: 224.7968
+Time for 8 threads: 212.7907
+Time for 9 threads: 211.6541
+final_speedup = 2.068
