@@ -2,7 +2,7 @@ import os
 import cv2
 import time
 import albumentations as A
-from functions.functions import augment_images, sequential_read
+from functions.functions import sequential_augment_images, sequential_read
 
 # Transform objects
 flipAndColorJittering = A.Compose([
@@ -94,13 +94,7 @@ start_time = time.time()
 folder_path = 'in_images/'
 images = sequential_read(folder_path)
 
-transformed_images = augment_images(images, transformations)
-    
-image_names = next(os.walk('in_images'))[2]
-size = len(transformations)
-for i, name in enumerate(image_names):
-        for j, image in enumerate(transformed_images[i * size: (i+1) * size]):
-            out_path = f'out_images/augmented_{j}_{name}'
-            cv2.imwrite(out_path, image)
+transformed_images = sequential_augment_images(images, transformations)
+
 end_time = time.time() 
 print(f'{round(end_time - start_time, 4)}')

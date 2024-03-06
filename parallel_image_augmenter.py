@@ -4,12 +4,10 @@ import cv2
 import time
 import multiprocessing
 import albumentations as A
-from functions.functions import parallel_augment_image
+from functions.functions import parallel_augment_images
 from joblib import Parallel, delayed
 
 if __name__ == '__main__':
-
-    # TODO - Rename the variables: images, image_batches. They are't images but paths.
 
     flipAndColorJittering = A.Compose([
         A.HorizontalFlip(p=1.0),
@@ -113,7 +111,7 @@ if __name__ == '__main__':
 
     range(0, num_images, batch_size)
     start_time = time.time()
-    Parallel(n_jobs=num_thread)(delayed(parallel_augment_image) (path, transformations) for path in path_batches)
+    Parallel(n_jobs=num_thread)(delayed(parallel_augment_images) (path, transformations) for path in path_batches)
     end_time = time.time()
     print(f'{round(end_time - start_time, 4)}')
     # print('Done!')
