@@ -1,32 +1,15 @@
 import albumentations as A
 import os
 import cv2
-import time
 
 def augment_images(images, transformations):
     transformed_images = []
-    # length = len(images)*len(transformations)
-    # print(f'Start thread {threading.current_thread().ident}')
+    cv2.setNumThreads(0)
     for image in images:
         for transformation in transformations:
-            # time.sleep(0.5)
             image_to_resize = transformation(image=image)['image']
-            image_to_resize = transformation(image=image_to_resize)['image']
-            image_to_resize = transformation(image=image_to_resize)['image']
             resized_image = _image_resized(image_to_resize)
             transformed_images.append(resized_image)
-        # progress = round(len(transformed_images)/length, 2)
-        # print(f'Progress: {progress*100}%')
-
-    return transformed_images
-
-def augment_image(image, transformations):
-    transformed_images = []
-    # print(f'Start thread {threading.current_thread().ident}')
-    for transformation in transformations:
-        image_to_resize = transformation(image=image)['image']
-        resized_image = _image_resized(image_to_resize)
-        transformed_images.append(resized_image)
 
     return transformed_images
 
@@ -40,10 +23,12 @@ def parallel_augment_image(image_to_read, transformations):
     return None
 
 def sequential_read(folder_path):
+    cv2.setNumThreads(0)
     image_list = os.listdir(folder_path)
     return [cv2.imread(folder_path + image) for image in image_list]    
 
 def _parallel_read(image_to_read):
+    cv2.setNumThreads(0)
     images = [cv2.imread(f'in_images/{image}') for image in image_to_read]
     return images
 
