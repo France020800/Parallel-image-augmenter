@@ -4,8 +4,9 @@ import cv2
 import time
 import multiprocessing
 import albumentations as A
-from functions.functions import parallel_augment_images
+from functions.functions import parallel_augment_images, parallel_augment_images_test
 from joblib import Parallel, delayed
+from multiprocessing import Pool
 
 if __name__ == '__main__':
 
@@ -111,7 +112,11 @@ if __name__ == '__main__':
 
     range(0, num_images, batch_size)
     start_time = time.time()
+    # Try with Parallel class
     Parallel(n_jobs=num_thread)(delayed(parallel_augment_images) (path, transformations) for path in path_batches)
+    # Try with Pool class
+    # with Pool(processes=num_thread) as pool:
+    #     pool.map(parallel_augment_images_test, [(path_batch, transformations) for path_batch in path_batches])
     end_time = time.time()
     print(f'{round(end_time - start_time, 4)}')
     # print('Done!')

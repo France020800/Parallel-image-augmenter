@@ -93,8 +93,9 @@ transformations = [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, 
 start_time = time.time()
 folder_path = 'in_images/'
 images = sequential_read(folder_path)
+print(f'Time to read images: {round(time.time() - start_time, 4)}')
 
 transformed_images = sequential_augment_images(images, transformations)
 
 end_time = time.time() 
-print(f'{round(end_time - start_time, 4)}')
+print(f'Total execution time: {round(end_time - start_time, 4)}')

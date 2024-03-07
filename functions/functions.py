@@ -1,25 +1,30 @@
 import albumentations as A
+import time
 import os
 import cv2
 
 def sequential_augment_images(images, transformations):
     cv2.setNumThreads(0)
+    transformed_images = []
     for i, image in enumerate(images):
         for j, transformation in enumerate(transformations):
             transformed_image = transformation(image=image)['image']
-            transformed_image = transformation(image=transformed_image)['image']
-            transformed_image = transformation(image=transformed_image)['image']
-            # out_path = f'out_images/augmented_{j}_demo_kitty_{i}.jpg'
-            # cv2.imwrite(out_path, transformed_image)
+            transformed_images.append(transformed_image)
+            #transformed_image = transformation(image=transformed_image)['image']
+            #transformed_image = transformation(image=transformed_image)['image']
+            
+    for transformed_image in transformed_images:
+        out_path = f'out_images/augmented_{j}_demo_kitty_{i}.jpg'
+        cv2.imwrite(out_path, transformed_image)
 
 def _augment_images(images, transformations):
     transformed_images = []
     for i, image in enumerate(images):
         for j, transformation in enumerate(transformations):
             transformed_image = transformation(image=image)['image']
-            transformed_image = transformation(image=transformed_image)['image']
-            transformed_image = transformation(image=transformed_image)['image']
-            # transformed_images.append(transformed_image)
+            #transformed_image = transformation(image=transformed_image)['image']
+            #transformed_image = transformation(image=transformed_image)['image']
+            transformed_images.append(transformed_image)
 
     return transformed_images
 
@@ -28,10 +33,28 @@ def parallel_augment_images(image_to_read, transformations):
     images = _parallel_read(image_to_read)
     transformed_images = _augment_images(images, transformations)
     size = len(transformations)
-    # for i, name in enumerate(image_to_read):
-    #     for j, image in enumerate(transformed_images[i * size: (i+1) * size]):
-    #         out_path = f'out_images/augmented_{j}_{name}'
-    #         cv2.imwrite(out_path, image)
+    for i, name in enumerate(image_to_read):
+        for j, image in enumerate(transformed_images[i * size: (i+1) * size]):
+            out_path = f'out_images/augmented_{j}_{name}'
+            cv2.imwrite(out_path, image)
+    return None
+
+def parallel_augment_images_test(args):
+    cv2.setNumThreads(0)
+    image_to_read = args[0]
+    transformations = args[1]
+    print(f'Start process {os.getpid()}')
+    images = _parallel_read(image_to_read)
+    start_time = time.time()
+    transformed_images = _augment_images(images, transformations)
+    size = len(transformations)
+    print(f'Process {os.getpid()} took {round(time.time() - start_time, 4)} to augment {len(image_to_read)} images')
+    saving_time = time.time()
+    for i, name in enumerate(image_to_read):
+        for j, image in enumerate(transformed_images[i * size: (i+1) * size]):
+            out_path = f'out_images/augmented_{j}_{name}'
+            cv2.imwrite(out_path, image)
+    print(f'Process {os.getpid()} took {round(time.time() - saving_time, 4)} to save images')
     return None
 
 def sequential_read(folder_path):
