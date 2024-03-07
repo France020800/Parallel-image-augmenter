@@ -1,3 +1,12 @@
+16 images and 13 transformations test
+sequential_time = 172.6656
+parallel_times = [127.4738, 99.3216, 95.8803, 87.3943, 81.5007, 79.5745, 76.1727]
+
+8 images and 13 transformations test
+sequential_time = 85.531
+parallel_times = [54.3518, 53.6831, 44.3223, 40.8267, 39.6434, 40.4133, 37.3148]
+speedups = 2.30
+
 LAST TESTS
 sequential_time = 628.2994 (312.7527, 320.4026, 315.1867)
 parallel_time = 219.9255 // 2
