@@ -1,48 +1,99 @@
-import os
-import cv2
 import time
 import albumentations as A
-from functions.functions import augment_images
-
-start_time = time.time()
-# Load images
-folder_path = 'in_images/'
-image_list = os.listdir(folder_path)
-images = [cv2.imread(folder_path + image) for image in image_list]
+from functions.functions import sequential_augment_images, sequential_read
 
 # Transform objects
-transformation = A.Compose([
-    A.Rotate(limit=360, p=1.0),
-    A.VerticalFlip(p=0.5),
-    A.HorizontalFlip(p=0.5),
-    A.RandomBrightnessContrast(brightness_limit=0.7, contrast_limit = 0.7, p=0.5),
-    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=0.5),
-    A.RandomCrop(width=1536, height=1536, p=0.2)
+flipAndColorJittering = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
 ])
 
-GB_shift = A.RGBShift(r_shift_limit=20, g_shift_limit=20, b_shift_limit=20, p=1.0)
-saturation_transformation = A.HueSaturationValue(p=1.0)
-channel_shuffle = A.ChannelShuffle(p=1.0)
-random_gamma = A.RandomGamma(p=1.0)
-random_brightness = A.RandomBrightnessContrast(p=1.0)
-blur = A.Blur(p=1.0)
-gray_transformation = A.ToGray(p=1.0)
-random_rotate = A.Rotate(limit=360, p=1.0)
-vertical_flip = A.VerticalFlip(p=1.0)
-horizontal_flip = A.HorizontalFlip(p=1.0)
-transformations = [GB_shift, saturation_transformation, channel_shuffle, random_gamma, random_brightness, blur, gray_transformation, random_rotate, vertical_flip, horizontal_flip]
+rotateAndColorJittering = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+])
 
+flipAndBlur = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.AdvancedBlur(p=1.0),
+])
 
-print('Augmenting images...')
-transformed_images = augment_images(images, transformations)
+rotateAndBlur = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.AdvancedBlur(p=1.0),
+])
 
-print('Saving images...')
-index = 0
-for image in transformed_images:
-    out_path = f'out_images/augmented_demo_kitty_{index}.jpg'
-    cv2.imwrite(out_path, image)
-    index += 1
-print('Done!')
+flipAndGray = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.ToGray(p=1.0),
+])
+
+rotateAndGray = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.ToGray(p=1.0),
+])
+
+flipAndChannelShuffle = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.ChannelShuffle(p=1.0),
+])
+
+rotateAndChannelShuffle = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.ChannelShuffle(p=1.0),
+])
+
+flipAndContrast = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.RandomBrightnessContrast(p=1.0),
+])
+
+rotateAndContrast = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.RandomBrightnessContrast(p=1.0),
+])
+
+flipAndPixelDropout = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.PixelDropout(dropout_prob=0.1, p=1.0),
+])
+
+rotateAndPixelDropout = A.Compose([
+    A.Rotate(limit=360, p=1.0),
+    A.PixelDropout(dropout_prob=0.1, p=1.0),
+])
+
+pixelDropOutAndColorJittering = A.Compose([
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+    A.PixelDropout(dropout_prob=0.3, p=1.0),
+])
+
+huge_transformation = A.Compose([
+    A.HorizontalFlip(p=1.0),
+    A.VerticalFlip(p=1.0),
+    A.Rotate(limit=360, p=1.0),
+    A.AdvancedBlur(p=1.0),
+    A.ToGray(p=1.0),
+    A.ChannelShuffle(p=1.0),
+    A.RandomBrightnessContrast(p=1.0),
+    A.PixelDropout(dropout_prob=0.1, p=1.0),
+    A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=1.0),
+])
+
+transformations = [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering, huge_transformation]
+
+start_time = time.time()
+folder_path = 'in_images/'
+images = sequential_read(folder_path)
+print(f'Time to read images: {round(time.time() - start_time, 4)}')
+
+transformed_images = sequential_augment_images(images, transformations)
 
 end_time = time.time() 
-print(f'Time taken to augment {len(images)} images: {round(end_time - start_time, 4)} seconds')
+print(f'Total execution time: {round(end_time - start_time, 4)}')
