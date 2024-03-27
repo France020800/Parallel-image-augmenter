@@ -94,28 +94,22 @@ if __name__ == '__main__':
     
     transformations= [flipAndColorJittering, rotateAndColorJittering, flipAndBlur, rotateAndBlur, flipAndGray, rotateAndGray, flipAndChannelShuffle, rotateAndChannelShuffle, flipAndContrast, rotateAndContrast, flipAndPixelDropout, rotateAndPixelDropout, pixelDropOutAndColorJittering, huge_transformation]
 
-    # Get the images number
-    image_paths = next(os.walk('in_images'))[2]
-    num_images = len(image_paths)
-
     # Create a pool of workers 
     if len(sys.argv) > 1:
         num_thread = int(sys.argv[1])
     else:
         num_thread = multiprocessing.cpu_count()
-    
+        
+    # Get the images number
+    image_paths = next(os.walk('in_images'))[2]
+    num_images = len(image_paths)
     
     # Split images into batches
     batch_size = round(num_images // num_thread)
     path_batches = [image_paths[i:i+batch_size] for i in range(0, num_images, batch_size)]
 
-    range(0, num_images, batch_size)
     start_time = time.time()
-    # Try with Parallel class
     Parallel(n_jobs=num_thread)(delayed(parallel_augment_images) (path, transformations) for path in path_batches)
-    # Try with Pool class
-    # with Pool(processes=num_thread) as pool:
-    #     pool.map(parallel_augment_images_test, [(path_batch, transformations) for path_batch in path_batches])
     end_time = time.time()
     print(f'{round(end_time - start_time, 4)}')
     # print('Done!')
